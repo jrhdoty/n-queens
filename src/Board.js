@@ -107,7 +107,7 @@
 
       return (_.reduce(col, function(accumulator, value) {
         return accumulator + value;
-      }, 0) > 1); // fixme
+      }, 0) > 1);
     },
 
     // test if any columns on this board contain conflicts
@@ -124,12 +124,23 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var matrix = this.rows();
+      var x = majorDiagonalColumnIndexAtFirstRow;
+      var y = sum = 0;
+      for (var i = x; i < matrix.length; i++) {
+        sum += matrix[y++][x++];
+        if (sum > 1) {
+          return true;
+        }
+      }
+      return false;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      return _.some(Object.keys(this.rows()), function(idx){
+        return this.hasMajorDiagonalConflictAt(idx);
+      }, this);
     },
 
 
