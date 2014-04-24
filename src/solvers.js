@@ -97,8 +97,51 @@ window.findNQueensSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
-
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
-  return solutionCount;
+  var nb = 0;
+  var matrix = [];
+  for (var i = 0; i < n; i++) {
+    matrix.push([]);
+    for (var j = 0; j < n; j++) {
+      matrix[i][j] = 0;
+    }
+  }
+  board = new Board(matrix);
+  return this._countNQueensSolutionsRec(board, 0);
 };
+
+
+
+window._countNQueensSolutionsRec = function(board, rowId) {
+  // stop condition
+  var result = 0;
+  if (rowId === board.rows().length -1) {
+    for (var i = 0; i < board.rows().length; i++) {
+      var copiedBoard = _copyBoard(board);
+      copiedBoard.rows()[rowId][i] = 1;
+      if (!_checkQueensConflicts(copiedBoard, i, rowId)) {
+        result++;
+      }
+    }
+    return result;
+    // no solutions has been found
+  }
+
+  // recursive case
+  for (var i = 0; i < board.rows().length; i++) {
+    var copiedBoard = _copyBoard(board);
+    copiedBoard.rows()[rowId][i] = 1;
+    if (!_checkQueensConflicts(copiedBoard, i, rowId)) {
+      result += _countNQueensSolutionsRec(copiedBoard, rowId+1)
+    }
+  }
+  return result;
+};
+
+
+
+
+
+
+
+
+
