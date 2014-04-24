@@ -125,9 +125,16 @@
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
       var matrix = this.rows();
-      var x = majorDiagonalColumnIndexAtFirstRow;
-      var y = sum = 0;
-      for (var i = x; i < matrix.length; i++) {
+      var x, y;
+      if(majorDiagonalColumnIndexAtFirstRow >= 0){
+        x = majorDiagonalColumnIndexAtFirstRow;
+        y = 0;
+      }else{
+        x = 0;
+        y = Math.abs(majorDiagonalColumnIndexAtFirstRow);
+      }
+      var sum = 0;
+      for (var i = x || y; i < matrix.length; i++) {
         sum += matrix[y++][x++];
         if (sum > 1) {
           return true;
@@ -139,7 +146,8 @@
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       return _.some(Object.keys(this.rows()), function(idx){
-        return this.hasMajorDiagonalConflictAt(idx);
+        return (this.hasMajorDiagonalConflictAt(idx ) ||
+                this.hasMajorDiagonalConflictAt(-idx));
       }, this);
     },
 
@@ -150,13 +158,36 @@
     //
     // test if a specific minor diagonal on this board contains a conflict
     hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var matrix = this.rows();
+      var x, y, i;
+      if(minorDiagonalColumnIndexAtFirstRow >= matrix.length){
+        x = matrix.length-1;
+        y = minorDiagonalColumnIndexAtFirstRow - (matrix.length-1);
+        i = (matrix.length-1)*2 - minorDiagonalColumnIndexAtFirstRow;
+      }else{
+        x = i = minorDiagonalColumnIndexAtFirstRow;
+        y = 0;
+      }
+      var sum = 0;
+      for (i; i >= 0 ; i--) {
+        sum += matrix[y][x];
+        y++;
+        x--;
+        if (sum > 1) {
+          return true;
+        }
+      }
+      return false;
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
-    }
+      return _.some(Object.keys(this.rows()), function(idx){
+        idx = parseInt(idx);
+        return (this.hasMinorDiagonalConflictAt(idx ) ||
+                this.hasMinorDiagonalConflictAt(idx+this.rows().length-1));
+      }, this);
+    },
 
     /*--------------------  End of Helper Functions  ---------------------*/
 
